@@ -224,7 +224,6 @@ const inferType = module.exports.inferType = function inferType(x) {
     x instanceof Uint8Array ? 17 :
     (x === true || x === false) ? 16 :
     typeof x === 'bigint' ? 20 :
-    Array.isArray(x) ? inferType(x[0]) :
     0
   )
 }
