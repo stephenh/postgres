@@ -31,12 +31,12 @@
     "prepublishOnly": "npm run lint"
   },
   "files": [
-    "/cf/src",
-    "/cf/polyfills.js",
-    "/cjs/src",
-    "/cjs/package.json",
-    "/src",
-    "/types"
+    "cf/src/*",
+    "cf/polyfills.js",
+    "cjs/src/*",
+    "cjs/package.json",
+    "src",
+    "types"
   ],
   "author": "Rasmus Porsager <rasmus@porsager.com> (https://www.porsager.com)",
   "funding": {
