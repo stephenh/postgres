@@ -401,6 +401,17 @@ t('Connect using SSL require', async() =>
   }))]
 )
 
+t('Connect using SSL direct', async() => {
+  const [{ supported }] = await sql`select current_setting('server_version_num')::int >= 180000 as supported`
+  return [true, !supported || (await new Promise((resolve, reject) => {
+    postgres({
+      ssl: 'require',
+      sslnegotiation: 'direct',
+      idle_timeout
+    })`select 1`.then(() => resolve(true), reject)
+  }))]
+})
+
 t('Connect using SSL prefer', async() => {
   await exec('psql', ['-c', 'alter system set ssl=off'])
   await exec('psql', ['-c', 'select pg_reload_conf()'])
@@ -2612,5 +2623,18 @@ t('Ensure reserve on query throws proper error', async() => {
 
   return [
     'wat', x, reserved.release()
+  ]
+})
+
+t('query during copy error', async() => {
+  const sql = postgres(options) // eslint-disable-line
+  await sql`create table test (id serial primary key, name text)`
+  const copy = await sql`copy test from stdin`.writable()
+  const error = await sql`select 1`.catch(e => e)
+  await copy.end()
+
+  return [
+    'COPY_IN_PROGRESS', error.code,
+    await sql`drop table test`
   ]
 })

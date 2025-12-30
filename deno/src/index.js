@@ -448,8 +448,9 @@ function parseOptions(a, b) {
 
   const ints = ['idle_timeout', 'connect_timeout', 'max_lifetime', 'max_pipeline', 'backoff', 'keep_alive']
   const defaults = {
-    max             : 10,
+    max             : globalThis.Cloudflare ? 3 : 10,
     ssl             : false,
+    sslnegotiation  : null,
     idle_timeout    : null,
     connect_timeout : 30,
     max_lifetime    : max_lifetime,
@@ -483,8 +484,8 @@ function parseOptions(a, b) {
       {}
     ),
     connection      : {
+      application_name: env.PGAPPNAME || 'postgres.js',
       ...o.connection,
-      application_name: o.connection?.application_name ?? env.PGAPPNAME ?? 'postgres.js',
       ...Object.entries(query).reduce((acc, [k, v]) => (k in defaults || (acc[k] = v), acc), {})
     },
     types           : o.types || {},
